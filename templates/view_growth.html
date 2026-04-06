@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Growth Records - {{ tree[0] }}</h2>
+<a href="/add_growth/{{ tree_id }}">Add Growth</a> | <a href="/dashboard">Back</a>
+<br><br>
+{% if records %}
+<table border="1">
+  <tr><th>Height (cm)</th><th>Temp (°C)</th><th>Humidity (%)</th><th>Area (sq.m)</th><th>Date</th></tr>
+  {% for r in records %}
+  <tr>
+    <td>{{ r[0] }}</td>
+    <td>{{ r[1] }}</td>
+    <td>{{ r[2] }}</td>
+    <td>{{ r[3] }}</td>
+    <td>{{ r[4] }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No records yet.</p>
+{% endif %}
+</body>
+</html>
