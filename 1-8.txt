@@ -1,0 +1,782 @@
+Exercise 1: Background Color, Font Style & Font Size Changer
+Android Studio — Java
+
+Prerequisites & Setup
+Step 1: Install Android Studio (latest stable version) from developer.android.com/studio
+Step 2: Open Android Studio → New Project → Empty Views Activity
+Step 3: Set Name: "StyleChanger", Package: com.example.stylechanger, Language: Java, Min SDK: API 21
+Step 4: Click Finish and wait for Gradle sync
+
+activity_main.xml  (res/layout/)
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvSample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello Android!"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="32dp"/>
+
+    <Button android:id="@+id/btnColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Background Color"
+        android:layout_marginBottom="8dp"/>
+
+    <Button android:id="@+id/btnFont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Font Style"
+        android:layout_marginBottom="8dp"/>
+
+    <Button android:id="@+id/btnSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Font Size"/>
+
+</LinearLayout>
+
+MainActivity.java  (java/com/example/stylechanger/)
+package com.example.stylechanger;
+
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    LinearLayout layout; TextView tvSample;
+    int colorIdx = 0, styleIdx = 0; float fontSize = 18f;
+    int[] colors = {Color.YELLOW, Color.CYAN, Color.GREEN, Color.WHITE};
+    int[] styles = {Typeface.NORMAL, Typeface.BOLD, Typeface.ITALIC, Typeface.BOLD_ITALIC};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        layout  = findViewById(R.id.layout);     // add id="@+id/layout" to LinearLayout
+        tvSample = findViewById(R.id.tvSample);
+
+        findViewById(R.id.btnColor).setOnClickListener(v -> {
+            layout.setBackgroundColor(colors[colorIdx++ % colors.length]);
+        });
+        findViewById(R.id.btnFont).setOnClickListener(v -> {
+            tvSample.setTypeface(null, styles[styleIdx++ % styles.length]);
+        });
+        findViewById(R.id.btnSize).setOnClickListener(v -> {
+            fontSize = (fontSize >= 30f) ? 14f : fontSize + 4f;
+            tvSample.setTextSize(fontSize);
+        });
+    }
+}
+
+How to Run
+Step 1: Connect an Android device via USB (enable Developer Options + USB Debugging) OR start an AVD emulator
+Step 2: Click the green Run ▶ button in Android Studio toolbar
+Step 3: Select your device/emulator and click OK
+Step 4: The app installs and launches automatically
+📌 Note: Remember to add android:id="@+id/layout" to the LinearLayout root element in the XML.
+
+Exercise 2: Calculator Application
+Android Studio — Java with Event Listeners
+
+Project Setup
+Step 1: New Project → Empty Views Activity → Name: "Calculator", Language: Java, Min SDK: API 21
+Step 2: Replace activity_main.xml with the layout below
+Step 3: Replace MainActivity.java with the code below
+
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="16dp" android:gravity="center">
+
+    <TextView android:id="@+id/tvResult"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="0" android:textSize="36sp" android:gravity="end"
+        android:padding="8dp" android:layout_marginBottom="16dp"/>
+
+    <!-- Row 1 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/btn7" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="7"/>
+        <Button android:id="@+id/btn8" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="8"/>
+        <Button android:id="@+id/btn9" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="9"/>
+        <Button android:id="@+id/btnDiv" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="/"/>
+    </LinearLayout>
+    <!-- Row 2 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/btn4" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="4"/>
+        <Button android:id="@+id/btn5" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="5"/>
+        <Button android:id="@+id/btn6" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="6"/>
+        <Button android:id="@+id/btnMul" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="*"/>
+    </LinearLayout>
+    <!-- Row 3 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/btn1" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="1"/>
+        <Button android:id="@+id/btn2" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="2"/>
+        <Button android:id="@+id/btn3" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="3"/>
+        <Button android:id="@+id/btnSub" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="-"/>
+    </LinearLayout>
+    <!-- Row 4 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/btn0" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="0"/>
+        <Button android:id="@+id/btnC" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="C"/>
+        <Button android:id="@+id/btnEq" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="="/>
+        <Button android:id="@+id/btnAdd" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:text="+"/>
+    </LinearLayout>
+</LinearLayout>
+
+MainActivity.java
+package com.example.calculator;
+
+import android.os.Bundle; import android.view.View;
+import android.widget.Button; import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    TextView tvResult;
+    double num1 = 0, num2 = 0, result = 0;
+    String operator = "";
+    boolean newOp = false;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        tvResult = findViewById(R.id.tvResult);
+        int[] ids = {R.id.btn0,R.id.btn1,R.id.btn2,R.id.btn3,R.id.btn4,
+                     R.id.btn5,R.id.btn6,R.id.btn7,R.id.btn8,R.id.btn9,
+                     R.id.btnAdd,R.id.btnSub,R.id.btnMul,R.id.btnDiv,
+                     R.id.btnEq,R.id.btnC};
+        for (int id : ids) findViewById(id).setOnClickListener(this);
+    }
+
+    @Override public void onClick(View v) {
+        Button b = (Button) v;
+        String txt = b.getText().toString();
+        switch (txt) {
+            case "C": tvResult.setText("0"); num1=num2=0; operator=""; break;
+            case "+": case "-": case "*": case "/":
+                num1 = Double.parseDouble(tvResult.getText().toString());
+                operator = txt; newOp = true; break;
+            case "=":
+                num2 = Double.parseDouble(tvResult.getText().toString());
+                switch(operator){
+                    case "+": result = num1+num2; break;
+                    case "-": result = num1-num2; break;
+                    case "*": result = num1*num2; break;
+                    case "/": result = (num2!=0)?num1/num2:0; break;
+                }
+                tvResult.setText(String.valueOf(result)); newOp=true; break;
+            default:
+                if (newOp) { tvResult.setText(txt); newOp=false; }
+                else { String cur=tvResult.getText().toString();
+                       tvResult.setText(cur.equals("0")?txt:cur+txt); }
+        }
+    }
+}
+
+How to Run
+Step 1: Build and run on emulator or device via Run ▶
+Step 2: Tap number buttons then an operator (+, -, *, /) then another number, then =
+Step 3: C clears the display
+
+Exercise 3: Send Email & Notifications
+Android Studio — JavaMail + NotificationManager
+
+Add Dependencies in build.gradle (Module: app)
+dependencies {
+    implementation "com.sun.mail:android-mail:1.6.7"
+    implementation "com.sun.mail:android-activation:1.6.7"
+}
+
+AndroidManifest.xml — Add Permissions
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+activity_main.xml
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="20dp">
+    <EditText android:id="@+id/etTo" android:hint="To (email)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/etSubject" android:hint="Subject" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/etBody" android:hint="Body" android:minLines="4"
+        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnSend" android:text="Send Email"
+        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+</LinearLayout>
+
+MainActivity.java
+package com.example.emailapp;
+
+import android.app.*; import android.os.Bundle;
+import android.os.AsyncTask; import android.widget.*;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.*;
+
+public class MainActivity extends AppCompatActivity {
+    static final String CH_ID = "email_channel";
+    EditText etTo, etSubject, etBody;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        etTo      = findViewById(R.id.etTo);
+        etSubject = findViewById(R.id.etSubject);
+        etBody    = findViewById(R.id.etBody);
+        createNotificationChannel();
+        findViewById(R.id.btnSend).setOnClickListener(v -> sendEmail());
+    }
+
+    void sendEmail() {
+        String to = etTo.getText().toString();
+        String sub= etSubject.getText().toString();
+        String body= etBody.getText().toString();
+
+        new AsyncTask<Void,Void,Boolean>(){
+            @Override protected Boolean doInBackground(Void... v){
+                try {
+                    Properties p = new Properties();
+                    p.put("mail.smtp.auth","true");
+                    p.put("mail.smtp.starttls.enable","true");
+                    p.put("mail.smtp.host","smtp.gmail.com");
+                    p.put("mail.smtp.port","587");
+                    Session s = Session.getInstance(p, new Authenticator(){
+                        protected PasswordAuthentication getPasswordAuthentication(){
+                            return new PasswordAuthentication("YOUR_GMAIL","YOUR_APP_PASSWORD");
+                        }
+                    });
+                    Message msg = new MimeMessage(s);
+                    msg.setFrom(new InternetAddress("YOUR_GMAIL"));
+                    msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+                    msg.setSubject(sub);
+                    msg.setText(body);
+                    Transport.send(msg);
+                    return true;
+                } catch(Exception e){ return false; }
+            }
+            @Override protected void onPostExecute(Boolean ok){
+                Toast.makeText(MainActivity.this, ok?"Sent!":"Failed!", Toast.LENGTH_SHORT).show();
+                if(ok) showNotification("Email Sent","Message delivered to "+to);
+            }
+        }.execute();
+    }
+
+    void showNotification(String title, String msg){
+        NotificationCompat.Builder b = new NotificationCompat.Builder(this, CH_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_email)
+            .setContentTitle(title).setContentText(msg)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(1, b.build());
+    }
+
+    void createNotificationChannel(){
+        NotificationChannel ch = new NotificationChannel(CH_ID,"Email",
+            NotificationManager.IMPORTANCE_DEFAULT);
+        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(ch);
+    }
+}
+
+How to Run
+Step 1: In Gmail account → Settings → Security → Enable 2-FA → Create "App Password"
+Step 2: Replace "YOUR_GMAIL" and "YOUR_APP_PASSWORD" in the code
+Step 3: Run on device/emulator, enter recipient email, subject, body and tap Send
+📌 Note: Never hardcode real passwords in production apps. Use environment variables or secure storage.
+
+Exercise 4: Library Management with SQLite Database
+Android Studio — Java + SQLite
+
+Database Helper — DBHelper.java
+package com.example.library;
+
+import android.content.ContentValues; import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.*;
+
+public class DBHelper extends SQLiteOpenHelper {
+    static final String DB="library.db"; static final int VER=1;
+
+    public DBHelper(Context ctx){ super(ctx,DB,null,VER); }
+
+    @Override public void onCreate(SQLiteDatabase db){
+        db.execSQL("CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,author TEXT,status TEXT DEFAULT 'available')");
+        db.execSQL("CREATE TABLE students(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,roll TEXT UNIQUE)");
+        db.execSQL("CREATE TABLE lend(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INTEGER,student_id INTEGER,lend_date TEXT,return_date TEXT)");
+        db.execSQL("CREATE TABLE reservations(id INTEGER PRIMARY KEY AUTOINCREMENT,book_id INTEGER,student_id INTEGER,reserve_date TEXT)");
+        // Seed sample data
+        db.execSQL("INSERT INTO books(title,author) VALUES('Java Programming','Gosling')");
+        db.execSQL("INSERT INTO books(title,author) VALUES('Android Dev','Meier')");
+        db.execSQL("INSERT INTO students(name,roll) VALUES('Alice','CS001')");
+        db.execSQL("INSERT INTO students(name,roll) VALUES('Bob','CS002')");
+    }
+
+    @Override public void onUpgrade(SQLiteDatabase db,int o,int n){
+        db.execSQL("DROP TABLE IF EXISTS books");
+        db.execSQL("DROP TABLE IF EXISTS students");
+        db.execSQL("DROP TABLE IF EXISTS lend");
+        db.execSQL("DROP TABLE IF EXISTS reservations");
+        onCreate(db);
+    }
+
+    // Returns cursor with available books
+    public Cursor getAvailableBooks(){
+        return getReadableDatabase().rawQuery(
+            "SELECT * FROM books WHERE status='available'",null);
+    }
+    // Returns cursor with lent books + student name
+    public Cursor getLentBooks(){
+        return getReadableDatabase().rawQuery(
+            "SELECT b.title,s.name,l.lend_date FROM lend l "+
+            "JOIN books b ON l.book_id=b.id "+
+            "JOIN students s ON l.student_id=s.id",null);
+    }
+    // Returns reservations
+    public Cursor getReservations(){
+        return getReadableDatabase().rawQuery(
+            "SELECT b.title,s.name,r.reserve_date FROM reservations r "+
+            "JOIN books b ON r.book_id=b.id "+
+            "JOIN students s ON r.student_id=s.id",null);
+    }
+    public void lendBook(int bookId, int studentId, String date){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("book_id",bookId); cv.put("student_id",studentId);
+        cv.put("lend_date",date);
+        db.insert("lend",null,cv);
+        db.execSQL("UPDATE books SET status='lent' WHERE id="+bookId);
+    }
+    public void reserveBook(int bookId, int studentId, String date){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("book_id",bookId); cv.put("student_id",studentId);
+        cv.put("reserve_date",date);
+        db.insert("reservations",null,cv);
+    }
+}
+
+activity_main.xml
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="16dp">
+    <Button android:id="@+id/btnAvailable" android:text="Available Books"
+        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnLent" android:text="Lent Books"
+        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnReserved" android:text="Reservations"
+        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <ListView android:id="@+id/listView"
+        android:layout_width="match_parent" android:layout_height="match_parent"/>
+</LinearLayout>
+
+MainActivity.java
+package com.example.library;
+
+import android.database.Cursor; import android.os.Bundle;
+import android.widget.*; import androidx.appcompat.app.AppCompatActivity;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+    DBHelper db; ListView listView;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        db = new DBHelper(this);
+        listView = findViewById(R.id.listView);
+
+        findViewById(R.id.btnAvailable).setOnClickListener(v->{
+            Cursor c = db.getAvailableBooks();
+            ArrayList<String> list = new ArrayList<>();
+            while(c.moveToNext()) list.add(c.getString(1)+" by "+c.getString(2));
+            listView.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, list));
+        });
+        findViewById(R.id.btnLent).setOnClickListener(v->{
+            Cursor c = db.getLentBooks();
+            ArrayList<String> list = new ArrayList<>();
+            while(c.moveToNext())
+                list.add(c.getString(0)+" -> "+c.getString(1)+" ("+c.getString(2)+")");
+            listView.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, list));
+        });
+        findViewById(R.id.btnReserved).setOnClickListener(v->{
+            Cursor c = db.getReservations();
+            ArrayList<String> list = new ArrayList<>();
+            while(c.moveToNext())
+                list.add(c.getString(0)+" reserved by "+c.getString(1));
+            listView.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, list));
+        });
+        // Seed a lend and reservation for demo
+        db.lendBook(1, 1, "2024-01-15");
+        db.reserveBook(2, 2, "2024-01-16");
+    }
+}
+
+How to Run
+Step 1: Create project, add the 3 files (DBHelper.java, activity_main.xml, MainActivity.java)
+Step 2: Run on emulator/device — sample data auto-inserted on first launch
+Step 3: Tap Available Books, Lent Books, or Reservations to view each list
+
+Exercise 5: User Login Screen using Apache Cordova
+Cordova — HTML/CSS/JS
+
+Prerequisites & Project Setup
+# Install Node.js first (nodejs.org)
+npm install -g cordova
+cordova create LoginApp com.example.loginapp LoginApp
+cd LoginApp
+cordova platform add android
+
+www/index.html  (replace entire file)
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <div class="container">
+        <img src="img/logo.png" class="logo" alt="Logo">
+        <label class="label">Welcome Back</label>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <div class="btn-row">
+            <button onclick="reset()">Reset</button>
+            <button onclick="login()">Submit</button>
+        </div>
+        <p id="msg"></p>
+    </div>
+    <script>
+        function login(){
+            var u=document.getElementById("username").value;
+            var p=document.getElementById("password").value;
+            if(u==="admin" && p==="1234")
+                document.getElementById("msg").textContent="Login Successful!";
+            else document.getElementById("msg").textContent="Invalid credentials!";
+        }
+        function reset(){
+            document.getElementById("username").value="";
+            document.getElementById("password").value="";
+            document.getElementById("msg").textContent="";
+        }
+    </script>
+</body>
+</html>
+
+www/css/index.css
+body { margin:0; background:#f0f4ff; font-family:Arial,sans-serif; }
+.container { max-width:340px; margin:60px auto; padding:32px;
+             background:#fff; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,.1);
+             display:flex; flex-direction:column; align-items:center; gap:12px; }
+.logo { width:90px; height:90px; border-radius:50%; object-fit:cover; }
+.label { font-size:22px; font-weight:bold; color:#1A73E8; margin-bottom:8px; }
+input { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;
+        font-size:15px; box-sizing:border-box; }
+.btn-row { display:flex; gap:12px; width:100%; }
+button { flex:1; padding:10px; border:none; border-radius:6px;
+         background:#1A73E8; color:#fff; font-size:15px; cursor:pointer; }
+button:first-child { background:#757575; }
+#msg { color:green; font-weight:bold; }
+
+How to Build & Run
+cordova build android
+cordova run android          # runs on connected device
+# OR to run in browser for quick testing:
+cordova platform add browser
+cordova run browser
+📌 Note: Place any PNG image at www/img/logo.png as the header image. Default credentials: admin / 1234
+
+Exercise 6: Current Location using Apache Cordova
+Cordova — Geolocation Plugin
+
+Setup Commands
+cordova create LocationApp com.example.locationapp LocationApp
+cd LocationApp
+cordova platform add android
+cordova plugin add cordova-plugin-geolocation
+
+AndroidManifest.xml — Add inside <manifest>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+www/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Location</title>
+    <style>
+        body{font-family:Arial;text-align:center;padding:40px;background:#f4f8ff;}
+        h2{color:#1A73E8;} #info{margin-top:20px;font-size:18px;line-height:2;}
+        button{padding:12px 28px;font-size:16px;background:#1A73E8;
+               color:white;border:none;border-radius:8px;cursor:pointer;}
+        a{color:#1A73E8;}
+    </style>
+</head>
+<body>
+    <h2>📍 Current Location</h2>
+    <button onclick="getLocation()">Get My Location</button>
+    <div id="info">Press the button to find your location.</div>
+    <script src="cordova.js"></script>
+    <script>
+    function getLocation(){
+        document.getElementById("info").innerHTML = "Fetching location...";
+        navigator.geolocation.getCurrentPosition(
+            function(pos){
+                var lat = pos.coords.latitude.toFixed(6);
+                var lng = pos.coords.longitude.toFixed(6);
+                var acc = pos.coords.accuracy.toFixed(1);
+                document.getElementById("info").innerHTML =
+                    "<b>Latitude:</b> "+lat+"<br>"+
+                    "<b>Longitude:</b> "+lng+"<br>"+
+                    "<b>Accuracy:</b> "+acc+" m<br><br>"+
+                    "<a href='https://maps.google.com/?q="+lat+","+lng+"' target='_blank'>Open in Google Maps</a>";
+            },
+            function(err){ document.getElementById("info").innerHTML="Error: "+err.message; },
+            {enableHighAccuracy:true, timeout:10000}
+        );
+    }
+    </script>
+</body>
+</html>
+
+How to Build & Run
+cordova build android
+cordova run android
+# Grant Location permission when app asks
+📌 Note: For testing in the browser: cordova platform add browser && cordova run browser. The browser uses the HTML5 Geolocation API.
+
+Exercise 7: Recipe Suggester with Nutrition Info
+Ionic Framework — Angular/TypeScript
+
+Prerequisites & Project Setup
+npm install -g @ionic/cli
+ionic start RecipeApp blank --type=angular
+cd RecipeApp
+ionic serve          # opens in browser for development
+
+src/app/home/home.page.html
+<ion-header><ion-toolbar color="primary">
+  <ion-title>🍳 Recipe Suggester</ion-title>
+</ion-toolbar></ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Enter Ingredients (comma separated)</ion-label>
+    <ion-input [(ngModel)]="ingredients" placeholder="e.g. egg, rice, tomato"></ion-input>
+  </ion-item>
+  <ion-button expand="block" (click)="findRecipes()" style="margin-top:12px">
+    Find Recipes
+  </ion-button>
+
+  <ion-list *ngIf="recipes.length > 0">
+    <ion-list-header><ion-label>Suggested Recipes</ion-label></ion-list-header>
+    <ion-card *ngFor="let r of recipes">
+      <ion-card-header>
+        <ion-card-title>{{ r.name }}</ion-card-title>
+        <ion-card-subtitle>{{ r.nutrition }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <b>Instructions:</b><br>{{ r.instructions }}
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+  <p *ngIf="noMatch" style="text-align:center;color:gray">
+    No recipe found. Try: egg, rice, tomato, pasta, or chicken.
+  </p>
+</ion-content>
+
+src/app/home/home.page.ts
+import { Component } from "@angular/core";
+
+@Component({ selector:"app-home",
+  templateUrl:"home.page.html", styleUrls:["home.page.scss"] })
+export class HomePage {
+  ingredients = "";
+  recipes: any[] = [];
+  noMatch = false;
+
+  db = [
+    { keys:["egg","tomato"], name:"Egg Tomato Scramble",
+      nutrition:"Calories: 250 | Protein: 14g | Carbs: 8g",
+      instructions:"1. Beat eggs. 2. Sauté tomato 2 min. 3. Add eggs, stir until cooked. Serve hot." },
+    { keys:["rice","egg"], name:"Egg Fried Rice",
+      nutrition:"Calories: 380 | Protein: 12g | Carbs: 55g",
+      instructions:"1. Cook rice. 2. Fry egg. 3. Mix together with soy sauce and vegetables." },
+    { keys:["pasta"], name:"Simple Pasta",
+      nutrition:"Calories: 320 | Protein: 10g | Carbs: 60g",
+      instructions:"1. Boil pasta 8-10 min. 2. Drain. 3. Toss with olive oil and seasoning." },
+    { keys:["chicken","tomato"], name:"Chicken Tomato Curry",
+      nutrition:"Calories: 450 | Protein: 35g | Carbs: 15g",
+      instructions:"1. Sauté onion. 2. Add chicken, brown 5 min. 3. Add tomato+spices. Simmer 20 min." },
+  ];
+
+  findRecipes(){
+    const ing = this.ingredients.toLowerCase().split(",").map(s=>s.trim());
+    this.recipes = this.db.filter(r=>r.keys.some(k=>ing.includes(k)));
+    this.noMatch = this.recipes.length === 0;
+  }
+}
+
+src/app/home/home.module.ts — Add FormsModule
+import { FormsModule } from "@angular/forms";
+// Add FormsModule to imports array in @NgModule
+imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes)]
+
+How to Build & Run
+ionic serve                          # Browser preview
+ionic capacitor add android
+ionic capacitor build android
+# Then open Android Studio: ionic capacitor open android
+# Run from Android Studio using Run button
+
+Exercise 8: BMI Calculator — Cross-Platform
+React Native
+
+Prerequisites & Project Setup
+npm install -g react-native-cli
+# OR use Expo (easier, recommended for beginners):
+npm install -g expo-cli
+npx create-expo-app BMICalculator
+cd BMICalculator
+npx expo start
+
+App.js  (replace entire file)
+import React, { useState } from "react";
+import {
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, SafeAreaView, StatusBar
+} from "react-native";
+
+export default function App() {
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [bmi, setBmi]       = useState(null);
+  const [category, setCat]  = useState("");
+
+  function calculate() {
+    const h = parseFloat(height) / 100;   // cm to m
+    const w = parseFloat(weight);
+    if (!h || !w || h <= 0 || w <= 0) { alert("Enter valid height and weight"); return; }
+    const b = (w / (h * h)).toFixed(1);
+    setBmi(b);
+    if (b < 18.5)      setCat("Underweight");
+    else if (b < 25)   setCat("Normal Weight ✅");
+    else if (b < 30)   setCat("Overweight");
+    else               setCat("Obese");
+  }
+
+  function reset() { setHeight(""); setWeight(""); setBmi(null); setCat(""); }
+
+  return (
+    <SafeAreaView style={s.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1A73E8"/>
+      <Text style={s.title}>⚖️ BMI Calculator</Text>
+
+      <Text style={s.label}>Height (cm)</Text>
+      <TextInput style={s.input} value={height} onChangeText={setHeight}
+        keyboardType="numeric" placeholder="e.g. 170"/>
+
+      <Text style={s.label}>Weight (kg)</Text>
+      <TextInput style={s.input} value={weight} onChangeText={setWeight}
+        keyboardType="numeric" placeholder="e.g. 70"/>
+
+      <View style={s.btnRow}>
+        <TouchableOpacity style={[s.btn,{backgroundColor:"#1A73E8"}]} onPress={calculate}>
+          <Text style={s.btnTxt}>Calculate</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[s.btn,{backgroundColor:"#757575"}]} onPress={reset}>
+          <Text style={s.btnTxt}>Reset</Text>
+        </TouchableOpacity>
+      </View>
+
+      {bmi && (
+        <View style={s.result}>
+          <Text style={s.bmiVal}>BMI: {bmi}</Text>
+          <Text style={s.cat}>{category}</Text>
+          <Text style={s.hint}>
+            {"<18.5 Underweight | 18.5-24.9 Normal | 25-29.9 Overweight | >=30 Obese"}
+          </Text>
+        </View>
+      )}
+    </SafeAreaView>
+  );
+}
+
+const s = StyleSheet.create({
+  container: { flex:1, backgroundColor:"#f0f4ff", padding:24, justifyContent:"center" },
+  title:  { fontSize:26, fontWeight:"bold", color:"#1A73E8", textAlign:"center", marginBottom:24 },
+  label:  { fontSize:15, fontWeight:"600", color:"#333", marginTop:12, marginBottom:4 },
+  input:  { backgroundColor:"#fff", borderRadius:8, padding:12, fontSize:16,
+            borderWidth:1, borderColor:"#ccc" },
+  btnRow: { flexDirection:"row", gap:12, marginTop:24 },
+  btn:    { flex:1, padding:14, borderRadius:8, alignItems:"center" },
+  btnTxt: { color:"#fff", fontWeight:"bold", fontSize:16 },
+  result: { marginTop:32, backgroundColor:"#fff", borderRadius:12, padding:20,
+            alignItems:"center", elevation:4 },
+  bmiVal: { fontSize:42, fontWeight:"bold", color:"#1A73E8" },
+  cat:    { fontSize:20, fontWeight:"600", color:"#2E7D32", marginTop:4 },
+  hint:   { fontSize:11, color:"#888", marginTop:12, textAlign:"center" },
+});
+
+How to Run
+# With Expo (easiest):
+npx expo start
+# Scan QR code with Expo Go app (Android/iOS)
+
+# For Android emulator:
+npx expo start --android
+
+# For iOS simulator (Mac only):
+npx expo start --ios
+
+# Without Expo (pure React Native):
+npx react-native run-android     # requires Android SDK configured
+📌 Note: Expo is recommended for beginners. Install the 'Expo Go' app from Play Store on your Android phone and scan the QR code to instantly preview the app.
+
+
+Quick Reference Summary
+#	Exercise	Technology	Run Command
+1	Style Changer	Android Studio + Java	Run ▶ in Android Studio
+2	Calculator	Android Studio + Java	Run ▶ in Android Studio
+3	Email & Notifications	Android Studio + JavaMail	Run ▶ in Android Studio
+4	Library Database	Android Studio + SQLite	Run ▶ in Android Studio
+5	Login Screen	Apache Cordova	cordova run android
+6	Current Location	Apache Cordova + Geolocation	cordova run android
+7	Recipe Suggester	Ionic + Angular	ionic serve
+8	BMI Calculator	React Native (Expo)	npx expo start
+
